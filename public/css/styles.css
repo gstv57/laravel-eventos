@@ -4,6 +4,18 @@
     font-family: 'Roboto';
 }
 
+.success-message {
+    color: green;
+    font-weight: bold;
+}
+
+/* Estilo para mensagem de falha (vermelha) */
+.error-message {
+    color: red;
+    font-weight: bold;
+}
+
+
 body {
     min-height: 100vh;
     padding-bottom: 100px;
@@ -224,6 +236,18 @@ header {
     width: 100px;
     margin-top: 30;
 }
+
+/* user joined event */
+
+#info-container .already-joined-msg {
+    margin: 15px 0;
+    color: #004085;
+    background-color: #CCE5FF;
+    border: 1px solid #B8DAFF;
+    padding: 10px;
+    width: 275px;
+}
+
 
 /* Footer */
 

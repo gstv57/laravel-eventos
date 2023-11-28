@@ -20,6 +20,7 @@ class Event extends Model
 
     protected $guarded = [];
 
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');
@@ -29,4 +30,5 @@ class Event extends Model
     {
         return $this->belongsToMany('App\Models\User');
     }
+
 }

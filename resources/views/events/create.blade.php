@@ -10,32 +10,32 @@
             @csrf
             <div class="form-group">
                 <label for="image">Imagem do evento:</label>
-                <input type="file" id="image" name="image" class="form-control-file" required>
+                <input type="file" id="image" name="image" class="form-control-file">
             </div>
             <div class="form-group">
                 <label for="title">Evento:</label>
                 <input type="text" class="form-control" id="title" name="title" placeholder="Nome do evento"
-                    required>
+                    value="{{ old('title') }}">
             </div>
             <div class="form-group">
                 <label for="title">Data do Evento:</label>
-                <input type="date" class="form-control" id="date" name="date">
+                <input type="date" class="form-control" id="date" name="date" value="{{ old('date') }}">
             </div>
             <div class="form-group">
                 <label for="title">Cidade:</label>
                 <input type="text" class="form-control" id="city" name="city" placeholder="Local do evento"
-                    required>
+                    value="{{ old('city') }}">
             </div>
             <div class="form-group">
                 <label for="title">O evento é privado?</label>
                 <select name="private" id="private" class="form-control">
-                    <option value="0">Não</option>
-                    <option value="1">Sim</option>
+                    <option value="0" {{ old('private') == 0 ? 'selected' : '' }}>Não</option>
+                    <option value="1" {{ old('private') == 1 ? 'selected' : '' }}>Sim</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="title">Descrição:</label>
-                <textarea name="description" id="description" class="form-control" placeholder="O que vai acontecer no evento"></textarea>
+                <textarea name="description" id="description" class="form-control" placeholder="O que vai acontecer no evento">{{ old('description') }}</textarea>
             </div>
             <div class="form-group">
                 <label for="title">Adicione itens de infraestrutura:</label>

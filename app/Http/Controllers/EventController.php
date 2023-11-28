@@ -5,20 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use PhpOption\None;
 
 class EventController extends Controller
 {
     // todos os registros e/ou pesquisa a partir de uma string
-    public function index()
+    public function index(Request $request)
     {
-        $search = request('search');
+        $search = $request->input('search');
         if ($search) {
             $events = Event::where([
-                ['title', 'like', '%' . $search . '%']
+                ['title', 'like', '%' . $search . '%'],
+                ['finished', false]
             ])->get();
         } else {
-            $events = Event::all();
+            $events = Event::where('finished', false)->get(); // Obtém apenas eventos não finalizados
         }
 
         return view('home', [
@@ -27,60 +29,94 @@ class EventController extends Controller
         ]);
     }
 
-    // acessar página de criação de eventos
     public function create()
     {
         return view('events.create');
     }
 
-    // após acessar a página de criação de eventos, podemos armazenar novos eventos no banco de dados
     public function store(Request $request)
     {
+        // correção!!!
+        // olhar a documentação para corrigir o campo 'date' para ser uma data/horario posterior a atual.
+        // retorno obtido => O campo data deve ser uma data posterior ou igual a today.
+        // após concluir solução, alterar o método update também.
+        $validated = $request->validate([
+            "title" => 'required|max:255',
+            "date" => 'required|date|after_or_equal:today',
+            "city" => 'required|max:255',
+            "private" => 'required|max:1',
+            "description" => 'required|max:4000000',
+        ]);
 
-        $event = new Event;
+        DB::beginTransaction();
 
-        $event->title = $request->title;
-        $event->date = $request->date;
-        $event->city = $request->city;
-        $event->private = $request->private;
-        $event->description = $request->description;
-        $event->items = $request->items;
+        try {
+
+            $event = new Event();
+
+            $event->title = $request->title;
+            $event->date = $request->date;
+            $event->city = $request->city;
+            $event->private = $request->private;
+            $event->description = $request->description;
+            $event->items = $request->items;
 
 
-        // file upload
+            // file upload
 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
-            $requestImage = $request->image;
+                $requestImage = $request->image;
 
-            $extension = $requestImage->extension();
+                $extension = $requestImage->extension();
 
-            $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . "." . $extension;
+                $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . "." . $extension;
 
-            $requestImage->move(public_path('img/events'),  $imageName);
+                $requestImage->move(public_path('img/events'),  $imageName);
 
-            $event->image = $imageName;
+                $event->image = $imageName;
+            }
+
+
+            $user_id = auth()->user()->id;
+            $event->user_id = $user_id;
+
+
+            $event->save();
+
+            DB::commit();
+
+            return redirect('/')->with('msg', 'Evento criado com sucesso!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/')->with('msg', 'Erro ao cadastrar o evento. Por favor entre em contato com o suporte.');
         }
-
-
-        $user = auth()->user();
-        $event->user_id = $user->id;
-
-
-        $event->save();
-
-        return redirect('/')->with('msg', 'Evento criado com sucesso!');
     }
-
 
     public function show($id)
     {
 
         $event = Event::FindOrFail($id);
 
+        $user = auth()->user();
+
+        $hasUserJoined = false;
+
+        if ($user) {
+
+            $userEvents = $user->eventsAsParticipant->toArray();
+
+            foreach ($userEvents as $userEvent) {
+                if ($userEvent['id'] == $id) {
+
+                    $hasUserJoined = true;
+                }
+            }
+        }
+
         $eventOwner = User::where('id', $event->user_id)->first()->toArray();
 
-        return view('events.show', ['event' => $event, 'eventOwner' => $eventOwner]);
+        return view('events.show', ['event' => $event, 'eventOwner' => $eventOwner, 'hasUserJoined' => $hasUserJoined]);
     }
 
     public function dashboard()
@@ -91,9 +127,18 @@ class EventController extends Controller
 
         $eventsAsParticipant = $user->eventsAsParticipant;
 
+
+        $attendedEvents = Event::where('attended', true)
+            ->where('finished', true)
+            ->where('user_id', '!=', $user->id)
+            ->get();
+
+        // dd($attendedEvents);
+
         return view('events.dashboard', [
             'events' => $events,
-            'eventsAsParticipant' => $eventsAsParticipant
+            'eventsAsParticipant' => $eventsAsParticipant,
+            'attendedEvents' => $attendedEvents
         ]);
     }
 
@@ -115,44 +160,122 @@ class EventController extends Controller
             return redirect('/dashboard');
         }
 
+
         return view('events.edit', ['event' => $event]);
     }
 
     public function update(Request $request)
     {
 
-        $data = $request->all();
+        $validated = $request->validate([
+            "title" => 'required|max:255',
+            "date" => 'date',
+            "city" => 'required|max:255',
+            "private" => 'required|max:1',
+            "description" => 'required|max:4000000',
+        ]);
 
-        // if update image
+        DB::beginTransaction();
 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+        try {
+            $data = $request->all();
 
-            $requestImage = $request->image;
+            // if update image
 
-            $extension = $requestImage->extension();
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
-            $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . "." . $extension;
+                $requestImage = $request->image;
 
-            $requestImage->move(public_path('img/events'),  $imageName);
+                $extension = $requestImage->extension();
 
-            $data['image'] = $imageName;
+                $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . "." . $extension;
+
+                $requestImage->move(public_path('img/events'),  $imageName);
+
+                $data['image'] = $imageName;
+            }
+
+            Event::findOrFail($request->id)->update($data);
+
+            DB::commit();
+
+            return redirect('/')->with('msg', 'Evento atualizado com sucesso!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/')->with('msg', 'Erro ao atualizar o evento. Por favor entre em contato com o suporte.');
         }
-
-        Event::findOrFail($request->id)->update($data);
-
-        return redirect('/dashboard')->with('msg', 'Evento editado com sucesso!');
     }
-
 
     public function joinEvent($id)
     {
 
-        $user = auth()->user();
+        Db::beginTransaction();
+        try {
+            $user = auth()->user();
 
-        $user->eventsAsParticipant()->attach($id);
+            $event = Event::findOrFail($id);
 
-        $event = Event::findOrFail($id);
+            $user->eventsAsParticipant()->attach($id);
 
-        return redirect('/dashboard')->with('msg', 'Sua presença está confirmada no evento' . $event->title);
+            $event->update(['attended' => true]);
+
+            Db::commit();
+            return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/')->with('msg', 'Erro ao confirmar presença no evento ' . $event->title . 'Por favor entre em contato com o suporte.');
+        }
+    }
+
+    public function leaveEvent($id)
+    {
+
+        DB::beginTransaction();
+
+        try {
+            $user = auth()->user();
+
+            $event = Event::findOrFail($id);
+            // apenas sair de evento que estão em andamento/ caso esteja finalizado, encerrar sozinho, ajustar isso.
+            $user->eventsAsParticipant()->detach($id);
+
+            DB::commit();
+
+            return redirect('/dashboard')->with('msg', 'Você saiu com sucesso do evento: ' . $event->title);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/')->with('msg', 'Erro ao sair do evento. Por favor entre em contato com o suporte.');
+        }
+    }
+
+    public function finishEvent($id)
+    {
+
+        DB::beginTransaction();
+        // verificar se realmente é necessario beginTransaction, apenas 1 atualização booleana na tabela do db.
+        try {
+
+            $event = Event::FindOrFail($id);
+            $user = auth()->user();
+
+            // verify if user is owner event
+            if ($user->id != $event->user->id) {
+                return redirect('/dashboard')->with('msg', 'Você não tem permissão para finalizar este evento.');
+            }
+
+            // verify if event has finish
+            if ($event->finished) {
+                return redirect('/dashboard')->with('msg', 'Este evento já foi finalizado.');
+            }
+
+            $event->update(['finished' => true]);
+
+            DB::commit();
+
+            return redirect('/dashboard')->with('msg', 'O Evento ' . $event->title . ' foi finalizado com sucesso.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/')->with('msg', 'Erro ao finalizar o evento. Por favor entre em contato com o suporte.');
+        }
     }
 }
