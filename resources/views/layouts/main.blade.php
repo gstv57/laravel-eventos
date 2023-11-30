@@ -42,6 +42,9 @@
                             <a href="/dashboard" class="nav-link">Meus Eventos</a>
                         </li>
                         <li class="nav-item">
+                            <a href="/profile" class="nav-link">Perfil</a>
+                        </li>
+                        <li class="nav-item">
                             <form action="/logout" method="POST">
                                 @csrf
                                 <a href="/logout" class="nav-link"
@@ -49,7 +52,6 @@
                             this.closest('form').submit();">Sair</a>
                             </form>
                         </li>
-
                     @endauth
                     @guest
                         <li class="nav-item">
@@ -84,8 +86,6 @@
             </div>
         </div>
     </main>
-
-
     <footer>
         <p>Sorocaba Eventos &copy; 2024</p>
     </footer>

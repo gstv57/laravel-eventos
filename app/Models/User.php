@@ -61,11 +61,16 @@ class User extends Authenticatable
 
     public function events()
     {
-        return $this->hasMany('App\Models\Event');
-    }
+        return $this->hasMany(Event::class);
+    } // usúario pode ter muitos eventos  1:N
 
     public function eventsAsParticipant()
     {
-        return $this->belongsToMany('App\Models\Event');
-    }
+        return $this->belongsToMany(Event::class);
+    } // usúario pode pertencer a muitos eventos 1:N
+
+    public function contactInfo()
+    {
+        return $this->hasOne(UserContactInfo::class, 'user_id');
+    } // usúario pode ter uma relação apenas, 1:1 'endereço:phone..etc'
 }

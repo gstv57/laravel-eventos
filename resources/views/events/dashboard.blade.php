@@ -27,14 +27,14 @@
                             <td>{{ count($event->users) }}</td>
                             <td>
                                 @if (!$event->finished)
-                                <a href="/events/edit/{{ $event->id }}" class="btn btn-info edit-btn"><ion-icon
-                                    name="create-outline"></ion-icon>Editar</a>
-                            <form action="/events/{{ $event->id }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger delete-btn"><ion-icon
-                                        name="trash-outline"></ion-icon>Deletar</button>
-                            </form>
+                                    <a href="/events/edit/{{ $event->id }}" class="btn btn-info edit-btn"><ion-icon
+                                            name="create-outline"></ion-icon>Editar</a>
+                                    <form action="/events/{{ $event->id }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger delete-btn"><ion-icon
+                                                name="trash-outline"></ion-icon>Deletar</button>
+                                    </form>
 
                                     <a href="/events/finish/{{ $event->id }}" class="btn btn-success"
                                         name="create-outline">Finalizar Evento</a>
@@ -98,7 +98,7 @@
         <h1>Eventos que participei</h1>
     </div>
     <div class="col-md-10 offset-md-1 dashboard-events-container">
-        @if (count($attendedEvents) > 0 )
+        @if (count($attendedEvents) > 0)
             <table class="table">
                 <thead>
                     <tr>
