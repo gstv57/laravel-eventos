@@ -20,7 +20,7 @@
                                     <div class="col-sm-3">
                                         <p class="mb-0">Nome completo</p>
                                         <input type="text" class="form-control form-control-sm" id="name"
-                                            name="name">
+                                            name="name" value="{{ $user->name }}">
                                     </div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0"></p>
@@ -31,7 +31,7 @@
                                     <div class="col-sm-3">
                                         <p class="mb-0">Email</p>
                                         <input type="email" class="form-control form-control-sm" id="email"
-                                            name="email">
+                                            name="email" value="{{ $user->email }}" disabled>
                                     </div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0"></p>

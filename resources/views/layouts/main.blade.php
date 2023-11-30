@@ -15,6 +15,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet">
 
     <!-- CSS Bootstrap -->
@@ -28,7 +29,7 @@
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="collapse navbar-collapse" id="navbar">
                 <a href="/" class="navbar-brand">
-                    <img src="/img/logo-red-fox.png" alt="RedFox Logo">
+                    <img src="/img/logo.png" alt="logo">
                 </a>
                 <ul class="navbar-nav">
                     <li class="nav-item">

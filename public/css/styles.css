@@ -22,10 +22,10 @@ body {
     position: relative;
 }
 
-header {
+/* header {
     background-color: #FFF;
     border-bottom: 1px solid #CCC;
-}
+} */
 
 .row {
     margin: 0;
@@ -36,14 +36,14 @@ header {
 }
 
 .btn.btn-primary {
-    background-color: #F2A340;
-    border: 2px solid #C28008;
+    background-color: #0d6efd;
+    border: 2px solid #0345a7;
 }
 
-.btn.btn-primary:hover {
+/* .btn.btn-primary:hover {
     background-color: #C28008;
     border-color: #C28008;
-}
+} */
 
 .msg {
     background-color: #D3EDDA;
@@ -63,24 +63,25 @@ header {
 
 #navbar {
     justify-content: space-between;
-    background-color: #FFF;
+    background-color: #353e48;
     padding: 5px 0;
 }
 
+
+
 #navbar a {
     font-size: 14px;
-    color: #757575;
+    color: #FFF;
 }
 
-
 #navbar a:hover {
-    color: #F2A340;
+    color: #0345a7;
 }
 
 /* search container */
 
 #search-container {
-    background-image: url('../img/background-image-barcelona.jpg');
+    background-image: url('../img/background-full-blue.jpg');
     background-size: cover;
     background-position: center;
     height: 400px;
@@ -88,8 +89,9 @@ header {
     text-align: center;
 }
 
+
 #search-container h1 {
-    color: #F2A340;
+    color: #FFF;
     margin-bottom: 30px;
     font-weight: 900px;
 }
@@ -195,7 +197,7 @@ header {
 
 #info-container ion-icon {
     font-size: 20px;
-    color: #F2A340;
+    color: #0d6efd;
     margin-right: 5px;
 }
 

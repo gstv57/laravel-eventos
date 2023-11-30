@@ -41,8 +41,6 @@
                                 @else
                                     <p>O evento já foi finalizado.</p>
                                 @endif
-
-
                             </td>
                         </tr>
                     @endforeach
@@ -94,32 +92,7 @@
         @endif
     </div>
 
-    <div class="col-md-10 offset-md-1 dashboard-title-container">
-        <h1>Eventos que participei</h1>
-    </div>
-    <div class="col-md-10 offset-md-1 dashboard-events-container">
-        @if (count($attendedEvents) > 0)
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nome</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($attendedEvents as $attendedEvent)
-                        <tr>
-                            <td scope="row">{{ $loop->index + 1 }}</td>
-                            <td><a href="/events/{{ $event->id }}">{{ $event->title }}</a></td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @else
-            <p>Você ainda não participou de nenhum evento</p>
-            <a href="/">Veja todos os eventos disponíveis</a>
-        @endif
-    </div>
+
 
 
 

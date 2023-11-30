@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use PhpOption\None;
 
@@ -121,25 +122,20 @@ class EventController extends Controller
 
     public function dashboard()
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        $events = $user->events;
+            $events = $user->events;
 
-        $eventsAsParticipant = $user->eventsAsParticipant;
+            $eventsAsParticipant = $user->eventsAsParticipant;
 
-
-        $attendedEvents = Event::where('attended', true)
-            ->where('finished', true)
-            ->where('user_id', '!=', $user->id)
-            ->get();
-
-        // dd($attendedEvents);
-
-        return view('events.dashboard', [
-            'events' => $events,
-            'eventsAsParticipant' => $eventsAsParticipant,
-            'attendedEvents' => $attendedEvents
-        ]);
+            return view('events.dashboard', [
+                'events' => $events,
+                'eventsAsParticipant' => $eventsAsParticipant
+            ]);
+        } catch (Exception $e) {
+            return redirect('/events/create')->with('msg', 'Você precisa criar um evento antes de poder acessar Meus Eventos');
+        }
     }
 
     public function destroy($id)

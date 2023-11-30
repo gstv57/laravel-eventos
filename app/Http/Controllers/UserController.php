@@ -29,7 +29,10 @@ class UserController extends Controller
     public function create()
     {
         try {
-            return view('profile.create');
+            $user = auth()->user();
+            return view('profile.create', [
+                'user' => $user
+            ]);
         } catch (Exception $e) {
             return redirect('/profile')->with('msg', 'Falha ao acessar a crição do perfil, entre em contato com o suporte');
         }
