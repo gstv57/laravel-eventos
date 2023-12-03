@@ -19,7 +19,6 @@ Route::delete('/events/leave/{id}', [EventController::class, 'leaveEvent'])->mid
 Route::get('/events/finish/{id}', [EventController::class, 'finishEvent'])->middleware('auth');
 Route::get('/events/participated', [EventController::class, 'participated'])->middleware('auth');
 
-
 Route::get('/profile', [UserController::class, 'index'])->middleware('auth');
 Route::get('/profile/edit', [UserController::class, 'edit'])->middleware('auth');
 Route::put('/profile/edit/{id}', [UserController::class, 'update'])->middleware('auth');

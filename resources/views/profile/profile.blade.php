@@ -29,27 +29,39 @@
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                         <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <p class="mb-0">Alguma coisa 1</p>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i class="fab fa-github fa-lg" style="color: #333333;"></i>
-                                        <p class="mb-0">Alguma coisa 2</p>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
-                                        <p class="mb-0">Alguma coisa 3</p>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                                        <p class="mb-0"> Alguma coisa 4</p>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                                        <p class="mb-0">Alguma coisa 5</p>
+                                        <p class="mb-0">Saldo Disponível: R$ {{ $user->wallet->balance }}</p>
                                     </li>
                                 </ul>
                             </div>
                         </div>
+
+                        <div class="card mb-4 mb-lg-0">
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush rounded-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                        <i class="fas fa-globe fa-lg text-warning"></i>
+                                        <p class="mb-0">Transações</p>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            @foreach ($transactions as $transaction)
+                                @if($transaction->type == 'credito')
+                                <ul class="list-group list-group-flush rounded-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                        <p class="mb-0">+ R${{$transaction->amount}}</p>
+                                    </li>
+                                </ul>
+                                @else
+                                <ul class="list-group list-group-flush rounded-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                        <p class="mb-0">- R${{$transaction->amount}}</p>
+                                    </li>
+                                </ul>
+                                @endif
+                            @endforeach
+                        </div>
+
                     </div>
                     <div class="col-lg-8">
                         <div class="card mb-4">

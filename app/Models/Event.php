@@ -29,4 +29,10 @@ class Event extends Model
     {
         return $this->belongsToMany('App\Models\User');
     } // 1 evento pode ter muitos usúarios 1:N
+
+    public function wallet(){
+        return $this->belongsTo(Wallet::class, 'wallet_id');
+    } // relacionamento para dizer que o método wallet pertence ao model 'Wallet', com a fk 'wallet_id'
+
+
 }

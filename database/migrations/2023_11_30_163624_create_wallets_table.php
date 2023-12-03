@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
 
 return new class extends Migration
 {
@@ -11,14 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('wallets', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class)->unique();
+            $table->decimal('balance', 10, 2)->default(0);
             $table->timestamps();
-            $table->string('title');
-            $table->text('description');
-            $table->string('city');
-            $table->boolean('private');
-            $table->decimal('price', 10, 2)->default(0);
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('wallets');
     }
 };

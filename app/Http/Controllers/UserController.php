@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Exception;
 use App\Models\User;
 use App\Models\UserContactInfo;
-use Exception;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class UserController extends Controller
 {
@@ -16,10 +18,12 @@ class UserController extends Controller
         try {
             $user = auth()->user();
             $contactInfo = $user->contactInfo;
+            $transactions = Transaction::where('user_id', $user->id)->get();
 
             return view('profile.profile', [
                 'contactInfo' => $contactInfo,
-                'user' => $user
+                'user' => $user,
+                'transactions' => $transactions
             ]);
         } catch (\Throwable $th) {
             return redirect('/profile')->with('msg', 'Aconteceu algum problema ao tentar acessar o perfil, contate o suporte.');
@@ -117,9 +121,6 @@ class UserController extends Controller
 
             $user = auth()->user();
             $contactInfo = $user->contactInfo;
-
-            // $data = $request->all();
-            // dd($data);
 
             $firstTable = [
                 'name' => $request->name,

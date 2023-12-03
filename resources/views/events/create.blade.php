@@ -39,6 +39,11 @@
                 <textarea name="description" id="description" class="form-control" placeholder="O que vai acontecer no evento">{{ old('description') }}</textarea>
             </div>
             <div class="form-group">
+                <label for="title">Preço:</label>
+                <input type="number" class="form-control" id="price" name="price"
+                    placeholder="Quanto o evento custa? EX: 10.00" value="{{ old('price') }}">
+            </div>
+            <div class="form-group">
                 <label for="title">Adicione itens de infraestrutura:</label>
                 <div class="form-group">
                     <input type="checkbox" name="items[]" value="Cadeiras">Cadeiras

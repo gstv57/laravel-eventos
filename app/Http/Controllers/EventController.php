@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use PhpOption\None;
 
 class EventController extends Controller
 {
@@ -37,6 +37,7 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
+
         // correção!!!
         // olhar a documentação para corrigir o campo 'date' para ser uma data/horario posterior a atual.
         // retorno obtido => O campo data deve ser uma data posterior ou igual a today.
@@ -47,6 +48,7 @@ class EventController extends Controller
             "city" => 'required|max:255',
             "private" => 'required|max:1',
             "description" => 'required|max:4000000',
+            "price" => 'decimal:2'
         ]);
 
         DB::beginTransaction();
@@ -54,14 +56,13 @@ class EventController extends Controller
         try {
 
             $event = new Event();
-
             $event->title = $request->title;
             $event->date = $request->date;
             $event->city = $request->city;
             $event->private = $request->private;
             $event->description = $request->description;
             $event->items = $request->items;
-
+            $event->price = $request->price;
 
             // file upload
 
@@ -77,11 +78,9 @@ class EventController extends Controller
 
                 $event->image = $imageName;
             }
-
-
             $user_id = auth()->user()->id;
             $event->user_id = $user_id;
-
+            $event->wallet_id = $user_id;
 
             $event->save();
 
@@ -98,7 +97,6 @@ class EventController extends Controller
     {
 
         $event = Event::FindOrFail($id);
-
         $user = auth()->user();
 
         $hasUserJoined = false;
@@ -211,13 +209,41 @@ class EventController extends Controller
 
             $event = Event::findOrFail($id);
 
-            $user->eventsAsParticipant()->attach($id);
+            if ($event->price == 0 || $user->wallet->balance >= $event->price) {
 
-            $event->update(['attended' => true]);
+                $user->eventsAsParticipant()->attach($id);
 
-            Db::commit();
-            return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
+                $event->update(['attended' => true]);
+
+                if ($event->price > 0) {
+                    $user->wallet->decrement('balance', $event->price);
+                    $event->wallet->increment('balance', $event->price);
+
+                    $userTransaction = new Transaction([
+                        'user_id' => auth()->user()->id,
+                        'event_id' => $id,
+                        'amount' => $event->price,
+                        'type' => 'debito',
+                    ]);
+                    $userTransaction->save();
+
+                    $organizerTransaction = new Transaction([
+                        'user_id' => $event->user_id,
+                        'event_id' => $id,
+                        'amount' => $event->price,
+                        'type' => 'credito',
+                    ]);
+                    $organizerTransaction->save();
+                }
+
+                DB::commit();
+                return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
+            } else {
+                DB::rollBack();
+                return redirect('/')->with('msg', 'Saldo insuficiente para participar do evento ' . $event->title . '. Por favor, recarregue sua carteira.');
+            }
         } catch (\Throwable $th) {
+            var_dump($th);
             DB::rollBack();
             return redirect('/')->with('msg', 'Erro ao confirmar presença no evento ' . $event->title . 'Por favor entre em contato com o suporte.');
         }

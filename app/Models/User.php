@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Wallet;
+use App\Models\Event;
 
 class User extends Authenticatable
 {
@@ -59,6 +61,28 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    // create wallet by default when this class be called.
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            $user->createWallet();
+        });
+    }
+
+    public function createWallet()
+    {
+        return $this->wallet()->create([
+            'balance' => 0,
+        ]);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+
+
     public function events()
     {
         return $this->hasMany(Event::class);
@@ -73,4 +97,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserContactInfo::class, 'user_id');
     } // usúario pode ter uma relação apenas, 1:1 'endereço:phone..etc'
+
+    public function transactions()
+    {
+        return $this->hasOne(Transaction::class);
+    }
 }

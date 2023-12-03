@@ -30,7 +30,7 @@
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <p class="mb-0">Email</p>
+                                        <p class="mb-0">E-mail</p>
                                         <input type="email" class="form-control form-control-sm" id="email"
                                             name="email" value="{{ $user->email }}" disabled>
                                     </div>
@@ -41,7 +41,7 @@
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        <p class="mb-0">Telefone</p>
+                                        <p class="mb-0">Telefone de contato</p>
                                         <input type="tel" class="form-control form-control-sm" id="telefone"
                                             name="phone" value="{{ $contactInfo->phone ?? '' }}">
                                     </div>

@@ -18,6 +18,7 @@
                     Participantes</p>
                 <p class="event-owner"><ion-icon name="star-outline"></ion-icon> Organizado por: {{ $eventOwner['name'] }}
                 </p>
+                <p class="event-price"><ion-icon name="cash-outline"></ion-icon> Preço do evento: R$ {{ $event->price }}</p>
                 @if (!$hasUserJoined && !$event->finished)
                     <form action="/events/join/{{ $event->id }}" method="POST">
                         @csrf
