@@ -203,7 +203,7 @@ class EventController extends Controller
     public function joinEvent($id)
     {
 
-        Db::beginTransaction();
+        DB::beginTransaction();
         try {
             $user = auth()->user();
 
@@ -218,23 +218,23 @@ class EventController extends Controller
                 if ($event->price > 0) {
                     $user->wallet->decrement('balance', $event->price);
                     $event->wallet->increment('balance', $event->price);
-
-                    $userTransaction = new Transaction([
-                        'user_id' => auth()->user()->id,
-                        'event_id' => $id,
-                        'amount' => $event->price,
-                        'type' => 'debito',
-                    ]);
-                    $userTransaction->save();
-
-                    $organizerTransaction = new Transaction([
-                        'user_id' => $event->user_id,
-                        'event_id' => $id,
-                        'amount' => $event->price,
-                        'type' => 'credito',
-                    ]);
-                    $organizerTransaction->save();
                 }
+
+                $userTransaction = new Transaction([
+                    'user_id' => auth()->user()->id,
+                    'event_id' => $id,
+                    'amount' => $event->price,
+                    'type' => 'debito',
+                ]);
+                $userTransaction->save();
+
+                $organizerTransaction = new Transaction([
+                    'user_id' => $event->user_id,
+                    'event_id' => $id,
+                    'amount' => $event->price,
+                    'type' => 'credito',
+                ]);
+                $organizerTransaction->save();
 
                 DB::commit();
                 return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
@@ -256,10 +256,32 @@ class EventController extends Controller
 
         try {
             $user = auth()->user();
-
             $event = Event::findOrFail($id);
-            // apenas sair de evento que estão em andamento/ caso esteja finalizado, encerrar sozinho, ajustar isso.
+
             $user->eventsAsParticipant()->detach($id);
+            $event->update(['attended' => false]);
+
+            if ($event->price > 0) {
+                $user->wallet->increment('balance', $event->price);
+                $event->wallet->decrement('balance', $event->price);
+            }
+            // user
+            $refundTransaction = new Transaction([
+                'user_id' => auth()->user()->id,
+                'event_id' => $id,
+                'amount' => $event->price,
+                'type' => 'credito_estorno',
+            ]);
+            $refundTransaction->save();
+
+            // owner event
+            $organizerTransaction = new Transaction([
+                'user_id' => $event->user_id,
+                'event_id' => $id,
+                'amount' => $event->price,
+                'type' => 'estorno',
+            ]);
+            $organizerTransaction->save();
 
             DB::commit();
 

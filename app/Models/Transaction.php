@@ -8,6 +8,11 @@ class Transaction extends Model
 {
     protected $fillable = ['user_id', 'event_id', 'amount', 'type'];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

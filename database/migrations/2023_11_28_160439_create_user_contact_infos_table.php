@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('neighborhood');
             $table->string('state');
             $table->string('zip');
+            $table->string('city');
             $table->foreignIdFor(User::class);
             // foreignIdFor(User::class); faz por debaixo dos panos a mesma coisa que o comment abaixo.
             // $table->foreign('user_id')->on('users')->references('id');

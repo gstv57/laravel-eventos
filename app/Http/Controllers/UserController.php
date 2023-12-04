@@ -51,6 +51,7 @@ class UserController extends Controller
             "address" => 'required|max:255',
             "address_number" => 'required|max:255',
             "neighborhood" => 'required|max:255',
+            "city" => 'required|max:255',
             "state" => 'required|max:255',
             "zip" => 'required|max:255'
         ]);
@@ -68,6 +69,7 @@ class UserController extends Controller
             $contactInfo->address = $request->address;
             $contactInfo->address_number = $request->address_number;
             $contactInfo->neighborhood = $request->neighborhood;
+            $contactInfo->city = $request->city;
             $contactInfo->country = $request->country;
             $contactInfo->state = $request->state;
             $contactInfo->zip = $request->zip;
@@ -106,12 +108,14 @@ class UserController extends Controller
     public function update(Request $request)
     {
 
+
         $validated = $request->validate([
             "name" => 'required|max:255',
             "phone" => 'required|max:255',
             "address" => 'required|max:255',
             "address_number" => 'required|max:255',
             "neighborhood" => 'required|max:255',
+            'city' => 'required|max:255',
             "state" => 'required|max:255',
             "zip" => 'required|max:255'
         ]);
@@ -133,6 +137,7 @@ class UserController extends Controller
                 'address' => $request->address,
                 'address_number' => $request->address_number,
                 'neighborhood' => $request->neighborhood,
+                'city' => $request->city,
                 'state' => $request->state,
                 'zip' => $request->zip
             ];

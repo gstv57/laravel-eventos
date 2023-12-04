@@ -46,23 +46,46 @@
                                 @if ($transaction->type == 'credito')
                                     <ul class="list-group list-group-flush rounded-3">
                                         <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <p class="mb-0">+ R${{ $transaction->amount }} |
+                                            <p class="mb-0">Crédito: + R${{ $transaction->amount }} |
                                                 {{ $transaction->event->title }} |
                                                 {{ $transaction->created_at->format('d/m/Y H:i:s') }}
 
                                             </p>
                                         </li>
                                     </ul>
-                                @else
+                                @elseif($transaction->type == 'debito')
                                     <ul class="list-group list-group-flush rounded-3">
                                         <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <p class="mb-0">- R${{ $transaction->amount }} |
+                                            <p class="mb-0">Débito: - R${{ $transaction->amount }} |
                                                 {{ $transaction->event->title }} |
                                                 {{ $transaction->created_at->format('d/m/Y H:i:s') }}
 
                                             </p>
                                         </li>
                                     </ul>
+
+                                @elseif($transaction->type == 'estorno')
+                                    <ul class="list-group list-group-flush rounded-3">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <p class="mb-0">Estorno: - R${{ $transaction->amount }} |
+                                                {{ $transaction->event->title }} |
+                                                {{ $transaction->created_at->format('d/m/Y H:i:s') }}
+
+                                            </p>
+                                        </li>
+                                    </ul>
+
+                                @elseif($transaction->type == 'credito_estorno')
+                                    <ul class="list-group list-group-flush rounded-3">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <p class="mb-0">Crédito Estorno: + R${{ $transaction->amount }} |
+                                                {{ $transaction->event->title }} |
+                                                {{ $transaction->created_at->format('d/m/Y H:i:s') }}
+
+                                            </p>
+                                        </li>
+                                    </ul>
+
                                 @endif
                             @endforeach
                         </div>
@@ -123,6 +146,15 @@
                                     </div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0">{{ $contactInfo->neighborhood }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Cidade</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{ $contactInfo->city }}</p>
                                     </div>
                                 </div>
                                 <hr>
