@@ -18,7 +18,7 @@ class UserController extends Controller
         try {
             $user = auth()->user();
             $contactInfo = $user->contactInfo;
-            $transactions = Transaction::where('user_id', $user->id)->get();
+            $transactions = Transaction::where('user_id', $user->id)->simplePaginate(3);
 
 
             return view('profile.profile', [
