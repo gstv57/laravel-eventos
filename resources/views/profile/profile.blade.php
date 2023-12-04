@@ -28,8 +28,7 @@
                             <div class="card-body p-0">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <p class="mb-0">Saldo Disponível: R$ {{ $user->wallet->balance }}</p>
+                                        <p class="mb-0"><ion-icon name="wallet-outline"></ion-icon>Saldo Disponível: R$ {{ $user->wallet->balance }}</p>
                                     </li>
                                 </ul>
                             </div>
@@ -39,25 +38,31 @@
                             <div class="card-body p-0">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <p class="mb-0">Transações</p>
+                                        <p class="mb-0"><ion-icon name="card-outline"></ion-icon>Transações</p>
                                     </li>
                                 </ul>
                             </div>
-
                             @foreach ($transactions as $transaction)
-                                @if($transaction->type == 'credito')
-                                <ul class="list-group list-group-flush rounded-3">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <p class="mb-0">+ R${{$transaction->amount}}</p>
-                                    </li>
-                                </ul>
+                                @if ($transaction->type == 'credito')
+                                    <ul class="list-group list-group-flush rounded-3">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <p class="mb-0">+ R${{ $transaction->amount }} |
+                                                {{ $transaction->event->title }} |
+                                                {{ $transaction->created_at->format('d/m/Y H:i:s') }}
+
+                                            </p>
+                                        </li>
+                                    </ul>
                                 @else
-                                <ul class="list-group list-group-flush rounded-3">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <p class="mb-0">- R${{$transaction->amount}}</p>
-                                    </li>
-                                </ul>
+                                    <ul class="list-group list-group-flush rounded-3">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <p class="mb-0">- R${{ $transaction->amount }} |
+                                                {{ $transaction->event->title }} |
+                                                {{ $transaction->created_at->format('d/m/Y H:i:s') }}
+
+                                            </p>
+                                        </li>
+                                    </ul>
                                 @endif
                             @endforeach
                         </div>

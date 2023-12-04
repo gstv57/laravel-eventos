@@ -20,6 +20,7 @@ class UserController extends Controller
             $contactInfo = $user->contactInfo;
             $transactions = Transaction::where('user_id', $user->id)->get();
 
+
             return view('profile.profile', [
                 'contactInfo' => $contactInfo,
                 'user' => $user,
