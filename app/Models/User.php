@@ -102,4 +102,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Transaction::class);
     }
+
+    public function accountBanking()
+    {
+        return $this->hasOne(BankAccount::class);
+    }
+
+
 }

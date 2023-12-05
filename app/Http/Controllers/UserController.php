@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BankAccount;
 use Exception;
 use App\Models\User;
 use App\Models\UserContactInfo;
@@ -19,12 +20,12 @@ class UserController extends Controller
             $user = auth()->user();
             $contactInfo = $user->contactInfo;
             $transactions = Transaction::where('user_id', $user->id)->simplePaginate(3);
-
-
+            $account = BankAccount::where('user_id', $user->id)->first();
             return view('profile.profile', [
                 'contactInfo' => $contactInfo,
                 'user' => $user,
-                'transactions' => $transactions
+                'transactions' => $transactions,
+                'account' => $account
             ]);
         } catch (\Throwable $th) {
             return redirect('/profile')->with('msg', 'Aconteceu algum problema ao tentar acessar o perfil, contate o suporte.');
@@ -150,6 +151,55 @@ class UserController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return redirect('/profile')->with('msg', 'Perfil não atualizado, entre em contato com o suporte');
+        }
+    }
+
+    public function accountBankGet()
+    {
+        try {
+            $user = auth()->user();
+            return view('profile.bankAccount', [
+                'user' => $user
+            ]);
+        } catch (Exception $e) {
+            var_dump($e);
+            return redirect('/profile')->with('msg', 'Falha ao acessar a crição do perfil bancário, entre em contato com o suporte');
+        }
+    }
+
+    public function accountBankRegister(Request $request)
+    {
+
+        $validated = $request->validate([
+            "agency" => 'required|max:5',
+            "account" => 'required|max:11',
+            "bank" => 'required|max:255',
+        ]);
+
+
+        Db::beginTransaction();
+
+        try {
+
+            $user = auth()->user();
+            $agency = $request->agency;
+            $account = $request->account;
+            $bank = $request->bank;
+
+            $newAccountBank = new BankAccount();
+            $newAccountBank->user_id = $user->id;
+            $newAccountBank->agency = $agency;
+            $newAccountBank->account = $account;
+            $newAccountBank->bank = $bank;
+            $newAccountBank->save();
+
+            DB::commit();
+
+            return redirect('/profile')->with('msg', 'Informações bancárias registradas com sucesso. Caso precise alterar os dados, entre em contato com o suporte.');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/profile')->with('msg', 'Informações bancárias não registradas. Entre em contato com o suporte.');
         }
     }
 }

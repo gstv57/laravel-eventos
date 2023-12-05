@@ -195,20 +195,39 @@
                                             class="btn btn-outline-primary ms-3 col-6">Editar</a>
                                     </div>
                                 </div>
+
+                            </div>
+
+                        </div>
+                        <div class="card mb-4 mb-lg-0">
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush rounded-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                        <p class="mb-0"><ion-icon name="cash-outline"></ion-icon>Dados Bancários</p>
+                                    </li>
+                                    @if(isset($account))
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <p class="mb-0">Banco: {{$account->bank}} | Agência: {{$account->agency}} | Conta: {{$account->account}}</p>
+                                        </li>
+                                    @else
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <a href="/profile/bank/create" type="button" class="btn btn-outline-primary ms-3 col-6">Cadastro</a>
+                                        </li>
+                                    @endif
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @else
-            <hr>
-            <div class="row">
-                <div class="col-sm-9">
-                    <a href="/profile/create" type="button" class="btn btn-outline-primary ms-3 col-6">Completar
-                        Perfil</a>
+            @else
+                <hr>
+                <div class="row">
+                    <div class="col-sm-9">
+                        <a href="/profile/create" type="button" class="btn btn-outline-primary ms-3 col-6">Completar
+                            Perfil</a>
+                    </div>
                 </div>
-            </div>
-            <hr>
+                <hr>
         @endif
     </section>
 @endsection
