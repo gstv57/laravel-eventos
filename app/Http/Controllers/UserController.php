@@ -50,13 +50,13 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             "name" => 'required|max:255',
-            "phone" => 'required|max:255',
+            "phone" => 'required|max:20',
             "address" => 'required|max:255',
-            "address_number" => 'required|max:255',
-            "neighborhood" => 'required|max:255',
-            "city" => 'required|max:255',
-            "state" => 'required|max:255',
-            "zip" => 'required|max:255'
+            "address_number" => 'required|max:10',
+            "neighborhood" => 'required|max:30',
+            "city" => 'required|max:20',
+            "state" => 'required|max:20',
+            "zip" => 'required|max:8'
         ]);
 
         DB::beginTransaction();
@@ -98,7 +98,6 @@ class UserController extends Controller
         try {
             $user = auth()->user();
             $contactInfo = $user->contactInfo;
-
             return view('profile.edit', [
                 'user' => $user,
                 'contactInfo' => $contactInfo
