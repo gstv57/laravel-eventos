@@ -19,7 +19,9 @@ class UserController extends Controller
         try {
             $user = auth()->user();
             $contactInfo = $user->contactInfo;
-            $transactions = Transaction::where('user_id', $user->id)->simplePaginate(3);
+            $transactions = Transaction::where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->simplePaginate(3);
             $account = BankAccount::where('user_id', $user->id)->first();
             return view('profile.profile', [
                 'contactInfo' => $contactInfo,
@@ -109,7 +111,6 @@ class UserController extends Controller
     public function update(Request $request)
     {
 
-
         $validated = $request->validate([
             "name" => 'required|max:255',
             "phone" => 'required|max:255',
@@ -158,11 +159,15 @@ class UserController extends Controller
     {
         try {
             $user = auth()->user();
+
+            if (BankAccount::where('user_id', $user->id)->count() >= 1) {
+                abort(404);
+            }
+
             return view('profile.bankAccount', [
                 'user' => $user
             ]);
         } catch (Exception $e) {
-            var_dump($e);
             return redirect('/profile')->with('msg', 'Falha ao acessar a crição do perfil bancário, entre em contato com o suporte');
         }
     }
@@ -182,6 +187,11 @@ class UserController extends Controller
         try {
 
             $user = auth()->user();
+
+            if (BankAccount::where('user_id', $user->id)->count() >= 1) {
+                abort(404);
+            }
+
             $agency = $request->agency;
             $account = $request->account;
             $bank = $request->bank;
@@ -196,7 +206,6 @@ class UserController extends Controller
             DB::commit();
 
             return redirect('/profile')->with('msg', 'Informações bancárias registradas com sucesso. Caso precise alterar os dados, entre em contato com o suporte.');
-
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect('/profile')->with('msg', 'Informações bancárias não registradas. Entre em contato com o suporte.');

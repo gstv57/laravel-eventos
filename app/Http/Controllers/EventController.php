@@ -167,6 +167,7 @@ class EventController extends Controller
             "city" => 'required|max:255',
             "private" => 'required|max:1',
             "description" => 'required|max:4000000',
+            'image' => 'mimes:jpg,bmp,png'
         ]);
 
         DB::beginTransaction();
@@ -177,6 +178,7 @@ class EventController extends Controller
             // if update image
 
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
+
 
                 $requestImage = $request->image;
 
@@ -220,21 +222,21 @@ class EventController extends Controller
                     $event->wallet->increment('balance', $event->price);
                 }
 
-                $userTransaction = new Transaction([
+                // user
+                Transaction::create([
                     'user_id' => auth()->user()->id,
                     'event_id' => $id,
                     'amount' => $event->price,
-                    'type' => 'debito',
+                    'type' => 'debito'
                 ]);
-                $userTransaction->save();
 
-                $organizerTransaction = new Transaction([
+                // owner Event
+                Transaction::create([
                     'user_id' => $event->user_id,
                     'event_id' => $id,
                     'amount' => $event->price,
                     'type' => 'credito',
                 ]);
-                $organizerTransaction->save();
 
                 DB::commit();
                 return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
@@ -243,7 +245,6 @@ class EventController extends Controller
                 return redirect('/')->with('msg', 'Saldo insuficiente para participar do evento ' . $event->title . '. Por favor, recarregue sua carteira.');
             }
         } catch (\Throwable $th) {
-            var_dump($th);
             DB::rollBack();
             return redirect('/')->with('msg', 'Erro ao confirmar presença no evento ' . $event->title . 'Por favor entre em contato com o suporte.');
         }
@@ -265,23 +266,22 @@ class EventController extends Controller
                 $user->wallet->increment('balance', $event->price);
                 $event->wallet->decrement('balance', $event->price);
             }
+
             // user
-            $refundTransaction = new Transaction([
+            Transaction::create([
                 'user_id' => auth()->user()->id,
                 'event_id' => $id,
                 'amount' => $event->price,
-                'type' => 'credito_estorno',
+                'type' => 'credito_estorno'
             ]);
-            $refundTransaction->save();
 
             // owner event
-            $organizerTransaction = new Transaction([
+            Transaction::create([
                 'user_id' => $event->user_id,
                 'event_id' => $id,
                 'amount' => $event->price,
-                'type' => 'estorno',
+                'type' => 'estorno'
             ]);
-            $organizerTransaction->save();
 
             DB::commit();
 
