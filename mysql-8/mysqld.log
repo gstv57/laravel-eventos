@@ -60,3 +60,9 @@
 2023-12-12T17:13:29.900130Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
 2023-12-12T17:13:30.349806Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060
 2023-12-12T17:13:30.349897Z 0 [System] [MY-010931] [Server] D:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqld: ready for connections. Version: '8.0.30'  socket: ''  port: 3306  MySQL Community Server - GPL.
+2023-12-12T19:19:28.990460Z 616 [System] [MY-013172] [Server] Received SHUTDOWN from user root. Shutting down mysqld (Version: 8.0.30).
+2023-12-12T19:19:28.991458Z 0 [System] [MY-013105] [Server] D:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqld: Normal shutdown.
+2023-12-12T19:19:29.940191Z 0 [ERROR] [MY-012611] [InnoDB] Operating system error number 183 in a file operation.
+2023-12-12T19:19:29.940772Z 0 [ERROR] [MY-012646] [InnoDB] File .\#innodb_redo\#ib_redo9: 'rename' returned OS error 283.
+2023-12-12T19:19:29.941358Z 0 [ERROR] [MY-013905] [InnoDB] Failed to mark redo log file .\#innodb_redo\#ib_redo9 as unused (by renaming to .\#innodb_redo\#ib_redo9_tmp).
+2023-12-12T19:19:30.109088Z 0 [System] [MY-010910] [Server] D:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqld: Shutdown complete (mysqld 8.0.30)  MySQL Community Server - GPL.
