@@ -41,8 +41,11 @@
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <p class="mb-0">Nome do Banco</p>
-                                        <input type="tel" class="form-control form-control-sm" id="bank"
-                                            name="bank">
+                                        <select class="js-example-basic-single" name="bank">
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->id }}">{{ $bank->id }} - {{ $bank->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0"></p>
@@ -61,4 +64,13 @@
             </div>
         </div>
     </section>
+@endsection
+
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
+</script>
 @endsection

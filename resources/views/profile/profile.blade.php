@@ -207,7 +207,7 @@
                                     </li>
                                     @if(isset($account))
                                         <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <p class="mb-0">Banco: {{$account->bank}} | Agência: {{$account->agency}} | Conta: {{$account->account}}</p>
+                                            <p class="mb-0">Banco: {{$account->banks->first()->name}} | Agência: {{$account->agency}} | Conta: {{$account->account}}</p>
                                         </li>
                                     @else
                                         <li class="list-group-item d-flex justify-content-between align-items-center p-3">

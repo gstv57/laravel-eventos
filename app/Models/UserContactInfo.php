@@ -10,13 +10,14 @@ class UserContactInfo extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'phone',
         'address',
         'address_number',
         'neighborhood',
+        'city',
         'state',
         'zip',
+        'country',
     ];
-
-
 }

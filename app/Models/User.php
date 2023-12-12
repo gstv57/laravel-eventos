@@ -4,13 +4,12 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany, HasOne};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Wallet;
-use App\Models\Event;
 
 class User extends Authenticatable
 {
@@ -76,37 +75,34 @@ class User extends Authenticatable
         ]);
     }
 
-    public function wallet()
+    public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);
     }
 
-
-
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     } // usúario pode ter muitos eventos  1:N
 
-    public function eventsAsParticipant()
+    public function eventsAsParticipant(): BelongsToMany
     {
         return $this->belongsToMany(Event::class);
     } // usúario pode pertencer a muitos eventos 1:N
 
-    public function contactInfo()
+    public function contactInfo(): HasOne
     {
         return $this->hasOne(UserContactInfo::class, 'user_id');
     } // usúario pode ter uma relação apenas, 1:1 'endereço:phone..etc'
 
-    public function transactions()
+    public function transactions(): HasOne
     {
         return $this->hasOne(Transaction::class);
     }
 
-    public function accountBanking()
+    public function accountBanking(): HasOne
     {
         return $this->hasOne(BankAccount::class);
     }
-
 
 }

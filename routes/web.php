@@ -1,10 +1,8 @@
 <?php
 
+use App\Http\Controllers\{EventController, UserController};
+
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\UserController;
-
 
 Route::get('/', [EventController::class, 'index']);
 Route::get('/events/create', [EventController::class, 'create'])->middleware('auth');
@@ -26,4 +24,4 @@ Route::get('/profile/create', [UserController::class, 'create'])->middleware('au
 Route::post('/profile/save', [UserController::class, 'store'])->middleware('auth');
 
 Route::get('/profile/bank/create', [UserController::class, 'accountBankGet'])->middleware('auth');
-Route::post('/profile/bank/save', [UserController::class,'accountBankRegister'])->middleware('auth');
+Route::post('/profile/bank/save', [UserController::class, 'accountBankRegister'])->middleware('auth');

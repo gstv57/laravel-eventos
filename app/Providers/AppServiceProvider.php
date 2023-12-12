@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\{Carbon, ServiceProvider};
 
 class AppServiceProvider extends ServiceProvider
 {
