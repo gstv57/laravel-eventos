@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-
+use App\Models\Bank;
 use Illuminate\Database\Seeder;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\Bank;
+
 class BankNames extends Seeder
 {
     /**
@@ -16,6 +16,7 @@ class BankNames extends Seeder
         $file = 'banks.csv';
 
         $data = Excel::toArray([], $file);
+
         foreach ($data[0] as $row) {
             Bank::create([
                 'id'   => $row[0],

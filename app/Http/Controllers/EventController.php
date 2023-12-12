@@ -148,13 +148,11 @@ class EventController extends Controller
     public function edit($id)
     {
         $user = auth()->user();
-
         $event = Event::findOrFail($id);
 
         if ($user->id != $event->user->id) {
             return redirect('/dashboard');
         }
-
         return view('events.edit', ['event' => $event]);
     }
 
@@ -246,13 +244,11 @@ class EventController extends Controller
                 return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
             } else {
                 DB::rollBack();
-
                 return redirect('/')->with('msg', 'Saldo insuficiente para participar do evento ' . $event->title . '. Por favor, recarregue sua carteira.');
             }
         } catch (Throwable) {
             DB::rollBack();
-
-            return redirect('/')->with('msg', 'Erro ao confirmar presença no evento ' . $event->title . 'Por favor entre em contato com o suporte.');
+            return redirect('/')->with('msg', 'Erro ao confirmar presença no evento. Por favor entre em contato com o suporte.');
         }
     }
 

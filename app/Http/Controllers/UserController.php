@@ -208,8 +208,6 @@ class UserController extends Controller
             return redirect('/profile')->with('msg', 'Informações bancárias registradas com sucesso. Caso precise alterar os dados, entre em contato com o suporte.');
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
-
             return redirect('/profile')->with('msg', 'Informações bancárias não registradas. Entre em contato com o suporte.');
         }
     }

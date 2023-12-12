@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
 {
@@ -19,7 +20,7 @@ class Event extends Model
 
     protected $guarded = [];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo('App\Models\User');
     } // 1 usúario pode ter muitos eventos 1:N
@@ -29,7 +30,7 @@ class Event extends Model
         return $this->belongsToMany('App\Models\User');
     } // 1 evento pode ter muitos usúarios 1:N
 
-    public function wallet()
+    public function wallet() : BelongsTo
     {
         return $this->belongsTo(Wallet::class, 'wallet_id');
     } // relacionamento para dizer que o método wallet pertence ao model 'Wallet', com a fk 'wallet_id'
