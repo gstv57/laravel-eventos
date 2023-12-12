@@ -10,7 +10,6 @@ use Throwable;
 
 class EventController extends Controller
 {
-    // todos os registros e/ou pesquisa a partir de uma string
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -21,7 +20,7 @@ class EventController extends Controller
                 ['finished', false],
             ])->get();
         } else {
-            $events = Event::where('finished', false)->get(); // Obtém apenas eventos não finalizados
+            $events = Event::where('finished', false)->get();
         }
 
         return view('home', [
@@ -37,25 +36,24 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-
-        // correção!!!
-        // olhar a documentação para corrigir o campo 'date' para ser uma data/horario posterior a atual.
-        // retorno obtido => O campo data deve ser uma data posterior ou igual a today.
-        // após concluir solução, alterar o método update também.
         $validated = $request->validate([
+            "image"       => 'required|extensions:jpg,png,jpeg',
             "title"       => 'required|max:255',
             "date"        => 'required|date|after_or_equal:today',
             "city"        => 'required|max:255',
             "private"     => 'required|max:1',
-            "description" => 'required|max:4000000',
+            "description" => 'required|max:255',
             "price"       => 'decimal:2',
         ]);
 
         DB::beginTransaction();
 
         try {
+            $user_id          = auth()->user()->id;
+            $event            = new Event();
+            $event->user_id   = $user_id;
+            $event->wallet_id = $user_id;
 
-            $event              = new Event();
             $event->title       = $request->title;
             $event->date        = $request->date;
             $event->city        = $request->city;
@@ -64,29 +62,21 @@ class EventController extends Controller
             $event->items       = $request->items;
             $event->price       = $request->price;
 
-            // file upload
-
+            //validate photo format and has file
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
                 $requestImage = $request->image;
-
-                $extension = $requestImage->extension();
-
-                $imageName = md5($requestImage->getClientOriginalName() . strtotime('now')) . "." . $extension;
-
+                $extension    = $requestImage->extension();
+                $imageName    = md5($requestImage->getClientOriginalName() . strtotime('now')) . "." . $extension;
                 $requestImage->move(public_path('img/events'), $imageName);
-
                 $event->image = $imageName;
             }
-            $user_id          = auth()->user()->id;
-            $event->user_id   = $user_id;
-            $event->wallet_id = $user_id;
 
             $event->save();
-
             DB::commit();
 
             return redirect('/')->with('msg', 'Evento criado com sucesso!');
+
         } catch (Throwable) {
             DB::rollBack();
 
@@ -103,17 +93,14 @@ class EventController extends Controller
         $hasUserJoined = false;
 
         if ($user) {
-
             $userEvents = $user->eventsAsParticipant->toArray();
 
-            foreach ($userEvents as $userEvent) {
-                if ($userEvent['id'] == $id) {
-
+            foreach ($userEvents as $item) {
+                if ($item['id'] == $id) {
                     $hasUserJoined = true;
                 }
             }
         }
-
         $eventOwner = User::where('id', $event->user_id)->first()->toArray();
 
         return view('events.show', ['event' => $event, 'eventOwner' => $eventOwner, 'hasUserJoined' => $hasUserJoined]);
@@ -139,20 +126,27 @@ class EventController extends Controller
 
     public function destroy($id)
     {
+        $user  = auth()->user();
+        $event = Event::findOrFail($id);
 
-        Event::findOrFail($id)->delete();
+        if ($user->id == $event->user->id) {
+            Event::findOrFail($id)->delete();
+        } else {
+            return redirect('/dashboard')->with('msg', 'Você não tem permissão para excluir esse evento.');
+        }
 
         return redirect('/dashboard')->with('msg', 'Evento excluido com sucesso!');
     }
 
     public function edit($id)
     {
-        $user = auth()->user();
+        $user  = auth()->user();
         $event = Event::findOrFail($id);
 
         if ($user->id != $event->user->id) {
-            return redirect('/dashboard');
+            return redirect('/dashboard')->with('msg', 'Você não tem permissão para editar esse evento.');
         }
+
         return view('events.edit', ['event' => $event]);
     }
 
@@ -174,7 +168,6 @@ class EventController extends Controller
             $data = $request->all();
 
             // if update image
-
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
                 $requestImage = $request->image;
@@ -244,10 +237,12 @@ class EventController extends Controller
                 return redirect('/')->with('msg', 'Sua presença está confirmada no evento: ' . $event->title);
             } else {
                 DB::rollBack();
+
                 return redirect('/')->with('msg', 'Saldo insuficiente para participar do evento ' . $event->title . '. Por favor, recarregue sua carteira.');
             }
         } catch (Throwable) {
             DB::rollBack();
+
             return redirect('/')->with('msg', 'Erro ao confirmar presença no evento. Por favor entre em contato com o suporte.');
         }
     }
@@ -300,7 +295,6 @@ class EventController extends Controller
 
         DB::beginTransaction();
 
-        // verificar se realmente é necessario beginTransaction, apenas 1 atualização booleana na tabela do db.
         try {
 
             $event = Event::FindOrFail($id);
@@ -317,7 +311,6 @@ class EventController extends Controller
             }
 
             $event->update(['finished' => true]);
-
             DB::commit();
 
             return redirect('/dashboard')->with('msg', 'O Evento ' . $event->title . ' foi finalizado com sucesso.');
