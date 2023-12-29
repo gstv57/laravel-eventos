@@ -15,8 +15,8 @@ class UserController extends Controller
             $user         = auth()->user();
             $contactInfo  = $user->contactInfo;
             $transactions = Transaction::where('user_id', $user->id)
-            ->orderByDesc('created_at')
-            ->simplePaginate(3);
+                ->orderByDesc('created_at')
+                ->simplePaginate(3);
             $account = BankAccount::where('user_id', $user->id)->first();
 
             return view('profile.profile', [
@@ -162,6 +162,8 @@ class UserController extends Controller
 
             if (BankAccount::where('user_id', $user->id)->count() >= 1) {
                 abort(404);
+            } elseif (!$user->contactInfo) {
+                return redirect('/profile')->with('msg', 'Complete seu cadastro antes de realizar o cadastro de conta bancaria.');
             }
 
             return view('profile.bankAccount', [
